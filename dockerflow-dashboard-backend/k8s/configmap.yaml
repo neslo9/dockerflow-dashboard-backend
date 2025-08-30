@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dockerflow-config
+  namespace: default 
+data:
+  ALGORITHM: HS256
+  ACCESS_TOKEN_EXPIRE_MINUTES: "15"
