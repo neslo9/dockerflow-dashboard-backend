@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from . import models
 from passlib.context import CryptContext
+from typing import List
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -22,3 +23,7 @@ def authenticate_user(db: Session, username: str, password: str):
     if not pwd_context.verify(password, user.hashed_password):
         return False
     return user
+
+def get_images_by_project(db: Session, project_name: str) -> List[models.ImageDetails]:
+    """Get all images belonging to a specific project"""
+    return db.query(models.ImageDetails).filter(models.ImageDetails.project == project_name).all()

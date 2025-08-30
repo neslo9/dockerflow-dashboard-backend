@@ -5,6 +5,7 @@ from ..database import SessionLocal
 from fastapi.security import OAuth2PasswordBearer
 from ..core.config import settings
 from jose import jwt, JWTError
+from typing import List
 
 router = APIRouter(prefix="/images", tags=["images"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
@@ -33,3 +34,16 @@ def get_current_user(request: Request, token: str = Depends(oauth2_scheme), db: 
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
     return user
+
+@router.get("/project/{project_name}", response_model=List[schemas.Image])
+def get_images_by_project(
+    project_name: str,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    """
+    Get all images belonging to a specific project.
+    Requires authentication.
+    """
+    images = crud.get_images_by_project(db, project_name)
+    return images
